@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Excel</title>
+</head>
+<body>
+    <h1>Upload File Excel</h1>
+    <p>Silakan unggah file Excel dengan format berikut:</p>
+    <ul>
+        <li><b>name:</b> Nama lokasi</li>
+        <li><b>latitude:</b> Koordinat lintang (dalam format desimal, contoh: -6.21462)</li>
+        <li><b>longitude:</b> Koordinat bujur (dalam format desimal, contoh: 106.84513)</li>
+        <li><b>description:</b> Deskripsi status (contoh: Sudah Tagging / Belum Tagging)</li>
+        <li><b>penanggung_jawab:</b> Nama penanggung jawab</li>
+        <li><b>mulai_pekerjaan:</b> Tanggal mulai pekerjaan (contoh: 2025-01-01)</li>
+        <li><b>volume_scaffolding:</b> Volume scaffolding (contoh: 150 m³)</li>
+    </ul>
+    <form action="/" method="post" enctype="multipart/form-data">
+        <label for="file">Upload Excel File:</label>
+        <input type="file" name="file" id="file" required>
+        <button type="submit">Upload</button>
+    </form>
+</body>
+</html>
