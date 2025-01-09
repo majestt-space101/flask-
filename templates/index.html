@@ -4,8 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Excel</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        img {
+            max-width: 150px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            margin-bottom: 10px;
+        }
+        ul {
+            text-align: left;
+            max-width: 400px;
+        }
+        form {
+            margin-top: 20px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+    </style>
 </head>
 <body>
+    <!-- Logo di atas dan berada di tengah -->
+    <img src="static/logo.png" alt="Logo Perusahaan">
+    
     <h1>Upload File Excel</h1>
     <p>Silakan unggah file Excel dengan format berikut:</p>
     <ul>
@@ -16,6 +50,10 @@
         <li><b>penanggung_jawab:</b> Nama penanggung jawab</li>
         <li><b>mulai_pekerjaan:</b> Tanggal mulai pekerjaan (contoh: 2025-01-01)</li>
         <li><b>volume_scaffolding:</b> Volume scaffolding (contoh: 150 m³)</li>
+        <li><b>tanggal_spk:</b> Tanggal SPK (contoh: 2025-01-05)</li>
+        <li><b>group:</b> Nama kelompok atau divisi (contoh: Group A)</li>
+        <li><b>progress:</b> Persentase kemajuan pekerjaan (contoh: 75%)</li>
+        <li><b>area:</b> Nama area atau lokasi pekerjaan (contoh: Jakarta Selatan)</li>
     </ul>
     <form action="/" method="post" enctype="multipart/form-data">
         <label for="file">Upload Excel File:</label>

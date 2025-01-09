@@ -1,6 +1,6 @@
+from flask import Flask, request, render_template, redirect, url_for, send_file
 import os
 import pandas as pd
-from flask import Flask, request, render_template, redirect, url_for
 import folium
 
 app = Flask(__name__)
@@ -47,26 +47,30 @@ def map():
     map_file = os.path.join(app.config['OUTPUT_FOLDER'], 'map.html')
     return render_template('map.html', map_file=map_file)
 
-from folium import Icon
+@app.route('/download-map')
+def download_map():
+    # Kirim file sebagai unduhan
+    map_file = os.path.join(app.config['OUTPUT_FOLDER'], 'map.html')
+    return send_file(
+        map_file,
+        as_attachment=True,
+        download_name='generated_map.html'
+    )
 
 def create_map(filepath):
     # Baca data dari Excel
     data = pd.read_excel(filepath)
     
-    # Cetak data untuk debugging
-    print("Data dari file Excel:")
-    print(data.head())  # Menampilkan 5 baris pertama data di terminal
-    
     # Validasi kolom
     required_columns = ['name', 'latitude', 'longitude', 'description', 
-                        'penanggung_jawab', 'mulai_pekerjaan', 'volume_scaffolding']
+                        'penanggung_jawab', 'mulai_pekerjaan', 'volume_scaffolding', 
+                        'tanggal_spk', 'group', 'progress', 'area']
     for col in required_columns:
         if col not in data.columns:
             raise ValueError(f"Missing required column: {col}")
     
     # Normalisasi latitude dan longitude jika nilainya terlalu besar
     if data['latitude'].abs().max() > 90 or data['longitude'].abs().max() > 180:
-        print("Normalizing latitude and longitude...")
         data['latitude'] = data['latitude'] / 1_000_000
         data['longitude'] = data['longitude'] / 1_000_000
     
@@ -76,17 +80,8 @@ def create_map(filepath):
     
     # Buat peta interaktif
     map_center = [data['latitude'].mean(), data['longitude'].mean()]
-    print(f"Map center: {map_center}")  # Debug lokasi pusat peta
     mymap = folium.Map(location=map_center, zoom_start=6)
-    
-    # Zoom otomatis berdasarkan jarak koordinat
-    if len(data) > 1:
-        min_lat, max_lat = data['latitude'].min(), data['latitude'].max()
-        min_lon, max_lon = data['longitude'].min(), data['longitude'].max()
-        bounds = [[min_lat, min_lon], [max_lat, max_lon]]
-        mymap.fit_bounds(bounds)
 
-    # Tambahkan marker ke peta dengan warna berdasarkan description
     for _, row in data.iterrows():
         # Tentukan warna berdasarkan isi description
         if "sudah tagging" in row['description'].lower():
@@ -94,9 +89,7 @@ def create_map(filepath):
         elif "belum tagging" in row['description'].lower():
             color = "red"
         else:
-            color = "blue"  # Default untuk deskripsi lainnya
-        
-        print(f"Adding marker: {row['name']} at {row['latitude']}, {row['longitude']} with color {color}")
+            color = "blue"
         
         # Tambahkan marker dengan popup yang berisi informasi tambahan
         popup_content = f"""
@@ -104,7 +97,11 @@ def create_map(filepath):
         <b>Description:</b> {row['description']}<br>
         <b>Penanggung Jawab:</b> {row['penanggung_jawab']}<br>
         <b>Mulai Pekerjaan:</b> {row['mulai_pekerjaan']}<br>
-        <b>Volume Scaffolding:</b> {row['volume_scaffolding']}
+        <b>Volume Scaffolding:</b> {row['volume_scaffolding']}<br>
+        <b>Tanggal SPK:</b> {row['tanggal_spk']}<br>
+        <b>Group:</b> {row['group']}<br>
+        <b>Progress:</b> {row['progress']}<br>
+        <b>Area:</b> {row['area']}
         """
         
         folium.Marker(
@@ -116,7 +113,6 @@ def create_map(filepath):
     # Simpan peta sebagai file HTML
     output_file = os.path.join(app.config['OUTPUT_FOLDER'], 'map.html')
     mymap.save(output_file)
-    print(f"Map saved to {output_file}")
 
 
 if __name__ == "__main__":
